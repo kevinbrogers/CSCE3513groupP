@@ -63,7 +63,7 @@ int keyinput::getKeys() {
 //----------------------------
 // function: getInput(int[])
 // purpose:  initialize curses library and use above functions;
-//           return entire key[] array with at most one value set to '1'
+//           put in "entered" variable array location for "1" value
 //----------------------------
 int keyinput::getInput() {
     WINDOW * mainwin;
