@@ -3,14 +3,21 @@
 #include <stdio.h>
 #include <time.h>
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * chip8.cpp DEMO VERSION                                                      *
+ * The chip.cpp file contains the chip8 constructor as well as functions for   *
+ * the emulation cycle.  The Demo version can successfully load a file,        *
+ * initialize the hardware, redraw an array of 0s and " "'s to represent the   *
+ * the monochromatic window, run several opcodes and update keyboard input     *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 chip8::chip8()
 {
-    
+    //empty
 }
 
 chip8::~chip8()
 {
-    
+    //empty
 }
 
 void chip8::init()
@@ -123,6 +130,17 @@ void chip8::emulateCycle()
 		// 6XNN sets VX equal to NN, and 7XNN adds NN to VX
 	}
 	
+	
+    //FOR TESTING!  //This test mimics the draw opcode by making a change to
+                    //graphics[].  Remove comments for testing; delete in final
+    //for(int x=8; x<17; x++)
+    //{
+    //    for(int y=8; y<17; y++)
+    //    {
+    //        graphics[x*y] = 1;
+    //    }
+    //} 
+	
     // Update timers
     if (delayTimer > 0)
         --delayTimer;
@@ -139,7 +157,21 @@ void chip8::emulateCycle()
 void chip8::render()
 {
     // Draw code goes here
-    
+    // Demo version prints a new array every time render is called, so once per cycle.
+    // 0's represent a black pixel and " "'s represent a white pixel
+    // Final version will use ncurses to refresh a window filled with this array
+    for(int x=0; x<32; x++)
+    {
+        for(int y=0; y<64; y++)
+        {
+            if(graphics[(x*64)+y]==0)
+                printf("0");  //color pixel black
+            else
+                printf(" ");  //color pixel white
+        }
+        printf("\n");
+    }
+    printf("\n\n");
 }
 
 bool chip8::loadROM(const char* filename)
@@ -189,5 +221,8 @@ bool chip8::loadROM(const char* filename)
     // will return false in previous lines if error
     printf("ROM successfully loaded\n");
     return true; 
+
+    //FOR TESTING!  //Assume that the file has been loaded successfully
+    //return true;  //Commented out for times when not testing
 }
 
