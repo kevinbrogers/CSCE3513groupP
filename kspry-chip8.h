@@ -1,4 +1,3 @@
-
 #ifndef CHIP8_H
 #define	CHIP8_H
 
@@ -29,8 +28,8 @@ class chip8 {
             unsigned short sp;          // Stack pointer
     
             unsigned char V[REGISTERS];        // Registers (V0-VF)
-            unsigned stack[STACK];         // Stack (16 levels)
-            unsigned memory[MEMORY];      // Memory 4 kilobytes
+            unsigned short stack[STACK];         // Stack (16 levels)
+            unsigned char memory[MEMORY];      // Memory 4 kilobytes
             
             unsigned delayTimer;        // Delay timer
             unsigned soundTimer;        // Sound timer
