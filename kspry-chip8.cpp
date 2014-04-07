@@ -74,21 +74,50 @@ void chip8::render()
 bool chip8::loadROM(const char* filename)
 {
     init();
-    //cout loading... "filename"
+    printf("Loading: %s...\n", filename);
     
-    //open file
+    // Open fie
+    FILE * file = fopen(filename, "r");
+    if (file == NULL) {
+        fputs("File error", stderr);
+        return false;
+    }
     
     //check fie size
+    fseek(file, 0, SEEK_END);
+    long fSize = ftell(file);
+    rewind(file);
+    printf("Filesize: %d\n", (int)fSize);
     
     //allocate memory to contain the whole file
+    char * buffer = (char*)malloc(sizeof(char) * fSize);
+    if (buffer == NULL) {
+        fputs("Memory error", stderr);
+        return false;
+    }
     
     //copy file into buffer
+    size_t result = fread(buffer, 1, fSize, file);
+    if (result != fSize) {
+        fputs("Reading error", stderr);
+        return false;
+    }
     
     //copy buffer into Chip8 memory
+    if ((4096 - 512) > fSize) {
+        for (int i = 0; i < fSize; ++i)
+            memory[i + 512] = buffer[i];
+    }
+    else
+        printf("Error: ROM too big for memory");
     
-    // cose file, free buffer
+    // close file, free buffer
+    fclose(file);
+    free(buffer);
     
-    return true; // will return false in previous lines if error
+    // will return false in previous lines if error
+    printf("ROM successfully loaded\n");
+    return true; 
 }
 
 
