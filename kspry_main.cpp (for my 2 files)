@@ -1,0 +1,20 @@
+
+#include <cstdlib>
+#include <stdio.h>
+#include <string>
+#include "chip8.h"
+
+// Display Size
+#define SCREEN_WIDTH 64
+#define SCREEN_HEIGHT 32
+
+
+int main(int argc, char** argv) {
+
+    chip8 mychip8;
+    
+    mychip8.loadROM("PONG");
+    
+    return 0;
+}
+
