@@ -221,6 +221,7 @@ void chip8::emulateCycle()
                     unsigned short pixel;
                     
                     //draw code
+                    // not finished
                     
                     drawFlag = true;
                     pc += 2;
@@ -248,8 +249,9 @@ void chip8::emulateCycle()
 //----------------------------------------------------------------------------------------------------------------------
                 
 		// implemented: 00E0, 00EE, 1NNN, 2NNN, 3XNN, 4XNN, 5XY0, 6XNN, 7XNN  -- Kevin walsh
+                // implemented: FX07, FX0A, FX15, FX18, FX1E, FX29, FX33, FX55, FX65  
                 // implemented: 8XY0, 8XY1, 8XY2, 8XY3, 8XY4, 8XY5, 8XY6, 8XY7, 8XYE  -- Kevin spry
-                // implemented: ANNN, BNNN, CXNN,       -- Kevin Spry
+                // implemented: ANNN, BNNN, CXNN, DXYN, EX9E, EXA1                    
 	}
     
     
