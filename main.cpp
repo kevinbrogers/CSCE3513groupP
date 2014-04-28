@@ -31,7 +31,15 @@ int main() {
     keyinput keyInput;
     
     //set up render system with ncurses
-    //Final Version only
+    initscr();
+    cbreak(); //get input after every character entered
+    noecho(); //so input will not be printed to screen
+    refresh(); //prepare console for writing
+    start_color(); //prepare console for printing in color
+    newChip8.emWin = newwin(SCREEN_HEIGHT, SCREEN_WIDTH, 0, 0); //set size of window
+//    box(newChip8.emWin, 0, 0);  //use this to test that a window is displaying at all
+    wrefresh(newChip8.emWin);
+    getch();
     
     //Final version will allow the user to select from a number of ROMS.  For Demo,
     //we're just using pong as an example
