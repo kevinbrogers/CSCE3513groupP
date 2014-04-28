@@ -1,4 +1,3 @@
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * chip8.h DEMO VERSION                                                        *
  * The chip.h file for the demo version is largely the same as it will be in   *
@@ -28,6 +27,7 @@ public:
     bool loadROM(const char * filename);
     void init();
     
+    WINDOW* emWin;		       // window for display
     unsigned char graphics[PIXELS];  //array of pixels
     unsigned char keys[KEYS];
     
