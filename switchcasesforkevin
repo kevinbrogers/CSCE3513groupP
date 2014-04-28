@@ -1,0 +1,32 @@
+//----------------------------------------------------------------------------------------------------------------------				
+				case 0xF000:
+					switch (opcode & 0x00FF)
+					{ 
+						case 0x0007: //FX07 -- sets the value of VX to the value of the delay timer
+							V[(opcode & 0x0F00) >> 8] = delayTimer;
+							pc += 2;
+						break;
+//----------------------------------------------------------------------------------------------------------------------
+						case 0x000A: // FX07 -- waits for a key press and stores the key press in VX
+						{	
+							bool keyPress = false;
+							for (int i = 0; i < 16; ++i)
+							{
+								if (key[i] != 0)
+								{
+									V[(opcode & 0x0F00) >> 8] = i;
+									keyPress = true;
+								}
+							}
+							// if no key was presed then the cyle is skipped and tried again
+							if (!keyPress)
+								return;
+							pc += 2;
+						}
+						break;
+//--------------------------------------------------------------------------------------------------------------------
+						case 0x0015: // FX15 -- set the delay timer to the value of VX
+							delayTimer = V[(opcode & 0x0F00) >> 8];
+							pc +=2;
+						break;
+//----------------------------------------------------------------------------------------------------------------------
