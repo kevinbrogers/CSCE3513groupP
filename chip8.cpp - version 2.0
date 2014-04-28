@@ -273,7 +273,33 @@ void chip8::emulateCycle()
 
 void chip8::render()
 {
+    initscr();
+    start_color();
+    init_pair(1, COLOR_BLACK, COLOR_BLACK); //defining black pixels
+    init_pair(2, COLOR_WHITE, COLOR_WHITE); //defining white pixels
+
     // Draw code goes here
+    for(int x=0; x<32; x++)
+    {
+        for(int y=0; y<64; y++)
+        {
+            if(graphics[(x*64)+y]==0)
+	    {
+		attron(COLOR_PAIR(1));
+		mvwprintw(emWin, x, y, "0");  //color pixel black
+		attroff(COLOR_PAIR(1));
+	    }
+            else
+            {
+		attron(COLOR_PAIR(2));
+                mvwprintw(emWin,x,y, " ");  //color pixel white
+		attroff(COLOR_PAIR(2));
+	    }
+        }
+        //printf("\n");
+    }
+    wrefresh(emWin);
+    getch();
     
 }
 
