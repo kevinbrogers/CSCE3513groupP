@@ -9,6 +9,13 @@
 #include <stdio.h>
 #include <cstdlib>
 #include "chip8.h"
+#include <ncurses.h>
+#include <unistd.h>
+#include <cstring>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <iostream>
 using namespace std;
 
 // Display Size
@@ -16,58 +23,81 @@ using namespace std;
 #define SCREEN_HEIGHT 32
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * main.cpp DEMO VERSION                                                       *
- * This file is the demo version of main.cpp.  It shows the functionality of   *
- * all working parts and has comments for non-functional requirments to be     *
- * implemented later.  This is just to prove that all the parts work.  Main.cpp*
- * takes a filename, converts it into a character, loads the ROM, and then     *
- * proceeds to emulate ten cycles, each of which are printed in a new array,   *
- * to make sure that the display, input, and system itself is working correctly*
+ * main.cpp FINAL VERSION                                                      *
+ * This file is the final version of main.cpp.  Main.cpp reads all the files in*
+ * the user's folder for ROM files, then asks the user to select which one to  *
+ * play.  It then converts this choice to a character array, loads the ROM, and*
+ * then proceeds to emulate the cycle.                                         *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+
 int main() {
+    //INITIALIZE:
     //instantiate a new chip8 emulator and new keyinput handler
     chip8 newChip8;
     keyinput keyInput;
     
-    //set up render system with ncurses
-    initscr();
-    cbreak(); //get input after every character entered
-    noecho(); //so input will not be printed to screen
-    refresh(); //prepare console for writing
-    start_color(); //prepare console for printing in color
-    newChip8.emWin = newwin(SCREEN_HEIGHT, SCREEN_WIDTH, 0, 0); //set size of window
-//    box(newChip8.emWin, 0, 0);  //use this to test that a window is displaying at all
-    wrefresh(newChip8.emWin);
-    getch();
+    //make list of ROMS
+    DIR *dir;
+    dirent *dire;
+    struct stat filestat;
+
+    dir = opendir(".");
+    while(dire = readdir(dir))
+    {
+	if(stat(dire->d_name, &filestat))
+		continue;
+	if(S_ISDIR(filestat.st_mode))
+		continue;
+        if(strstr(dire->d_name, ".")==NULL)
+	    cout << dire->d_name << endl;
+    }
+    closedir(dir);
+
+    //ask user to select a rom to load
+    cout << endl << "Select a ROM to load: ";
+    cin >> rom;
+
+    //attempt to load rom
+    if(!nc8.loadROM("PONG"))
+	return 1;
+
+    //Initialize window
+    initscr();		//initialize ncurses
+    cbreak();		//get input after every character entered
+    noecho();		//so input will not automatically print to window
+    refresh();		//prepare console for window
+
+    start_color();	//prepare console for colors
+    init_pair(1, COLOR_BLACK, COLOR_BLACK); //defining black pixels
+    init_pair(2, COLOR_WHITE, COLOR_WHITE); //defining white pixels
+
+    nc8.emWin = newwin(SCREEN_HEIGHT, SCREEN_WIDTH, 0, 0);
+    wrefresh(nc8.emWin);
     
-    //Final version will allow the user to select from a number of ROMS.  For Demo,
-    //we're just using pong as an example
-    //Load ROM.  If loadROM fails to load the file, return 1
-    if(!newChip8.loadROM("Pong"))
-        return 1;
-        
-    //emulate loop
-    //In the final design, while should be set to true, so the system will keep
-    //looping indefinitely, so long as the game is running.  For our Demo, we are
-    //only allowing it to loop 10 times because that should be enough to prove
-    //functionality
-    int count=0;  //REMOVE IN FINAL VERSION
-    while(count < 10)  //CHANGE TO TRUE IN FINAL VERSION
+    //GAME LOOP:
+    int ch; 
+    while((ch=getch()) != 'l')  //CHANGE TO ESCAPE KEY TO EXIT GAME WINDOW IN FINAL
     {
     	//emulate one cycle
-        newChip8.emulateCycle();
+        nc8.emulateCycle();
 
+	nc8.drawFlag = true;
 	//if draw flag is set, update screen
-	if(newChip8.drawFlag)
-		newChip8.render();
-        
-        //store key press state
-	//newChip8.setKeys();
+	if(nc8.drawFlag==true)
+		nc8.render();
 
-        count++;  //REMOVE IN FINAL VERSION
-        
+        //store key press state
+	keyInput.getKeys();
+	
+	//update window
+	wrefresh(nc8.emWin);
      }
+
+    //when user decides to end program (by pressing l), destroy window and end ncurses mode
+    delwin(nc8.emWin);
+    endwin();
+
      
      //FOR TESTING!  //Because the display just reprints the array and does not
                      //yet make use of ncurses for the window, the following
@@ -75,7 +105,7 @@ int main() {
                      //Final version will integrate seamlessly with display
     
     // get input; this section should be included in the loop so that it runs every time the screen refreshes
-    keyInput.getInput();
+/*    keyInput.getInput();
     for (int i = 0; i < 16; i++) // ensure array is full of 0's
         newChip8.keys[i] = 0;
     if (keyInput.getLocation() != -1) // place a 1 in the proper array location
@@ -85,7 +115,7 @@ int main() {
     cout << "your entry gives the array: ";
     for (int i = 0; i < 16; i++)
         cout << newChip8.keys[i];
-    cout << endl;
+    cout << endl;*/
 
 
     return 0;
