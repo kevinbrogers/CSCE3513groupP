@@ -1,9 +1,10 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * chip8.h DEMO VERSION                                                        *
- * The chip.h file for the demo version is largely the same as it will be in   *
- * its final form.  variables that represent the chip8 hardware are mostly made*
- * private, while the functions that operate on them are made public.          *
+ * chip8.h FINAL VERSION                                                       *
+ * variables that represent the chip8 hardware are mostly made private, while  *
+ * the functions that operate on them are made public.                         *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+#include <ncurses.h>
+
 
 #ifndef CHIP8_H
 #define	CHIP8_H
