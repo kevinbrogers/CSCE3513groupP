@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <ncurses.h>
 
 unsigned char fontset[80] =
 {
@@ -425,7 +426,7 @@ void chip8::emulateCycle()
     if (sound_timer > 0)
     {
         //if (soundTimer == 1)
-            //make some noise
+            beep();
 
         --sound_timer;
     }
@@ -435,18 +436,25 @@ void chip8::emulateCycle()
 
 void chip8::render()
 {
-    // draw
-    for (int y = 0; y < 32; y++) {
-        for (int x = 0; x < 64; x++) {
-
-            if (graphics[(y * 64) + x] == 0)
-                printf(" ");
+    for(int x=0; x<32; x++)
+    {
+        for(int y=0; y<64; y++)
+        {
+            if(graphics[(x*64)+y]==0)
+	    {
+		wattron(emWin, COLOR_PAIR(1));
+		mvwaddch(emWin, x, y, '0');  //color pixel black
+		wattroff(emWin, COLOR_PAIR(1));
+	    }
             else
-                printf("*");
+            {
+		wattron(emWin, COLOR_PAIR(2));
+                mvwaddch(emWin, x, y, ' ');  //color pixel white
+		wattroff(emWin, COLOR_PAIR(2));
+	    }
         }
-        printf("\n");
     }
-    printf("\n");
+    drawFlag=false;
 }
 
 bool chip8::loadROM(const char * filename)
