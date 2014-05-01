@@ -4,7 +4,7 @@
 * its final form. variables that represent the chip8 hardware are mostly made*
 * private, while the functions that operate on them are made public. *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-#include <curses.h>
+#include <ncurses.h>
 
 #ifndef CHIP8_H
 #define CHIP8_H
