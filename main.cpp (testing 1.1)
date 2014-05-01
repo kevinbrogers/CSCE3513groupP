@@ -80,7 +80,7 @@ int main( int argc, char *argv[] )
     wattron(border, COLOR_PAIR(2));
     wrefresh(border);
 
-    c8.emWin = newwin(SCREEN_HEIGHT, SCREEN_WIDTH, 0, 0);
+    c8.emWin = newwin(SCREEN_HEIGHT, SCREEN_WIDTH, 1, 1);
     wrefresh(c8.emWin);
 
     //makes the getch a no-delay function (doesn't halt program for input)
