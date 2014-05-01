@@ -52,6 +52,15 @@ int main( int argc, char *argv[] )
         else
             cout << "\nSuccessfully loaded '" << argv[1] << "'\n\n";
 
+        //testing purposes
+        for (int y = 0; y < 32; y++)
+           for (int x = 0; x < 64; x++)
+           {
+                if ( ( ((y*64)+x) % 2 ) == 0)
+                   c8.graphics[(y*64)+x] = 0;
+                else
+                   c8.graphics[(y*64)+x] = 1;
+           }
 
     //Initialize window
     initscr();  //initialize ncurses
@@ -59,16 +68,20 @@ int main( int argc, char *argv[] )
     noecho();   //so input will not automatically print to window
     refresh();  //prepare console for window
 
-    start_color();      //prepare console for colors
-    init_pair(1, COLOR_BLACK, COLOR_BLACK); //defining black pixels
-    init_pair(2, COLOR_WHITE, COLOR_WHITE); //defining white pixels
+start_color();      //prepare console for colors
+    init_pair(1, COLOR_RED, COLOR_RED); //defining black pixels //red=black
+    init_pair(2, COLOR_CYAN, COLOR_CYAN); //defining white pixels //cyan=white
 
     c8.emWin = newwin(SCREEN_HEIGHT, SCREEN_WIDTH, 0, 0);
     wrefresh(c8.emWin);
 
+    //makes the getch a no-delay function (doesn't halt program for input)
+    nodelay(stdscr, TRUE);
+
+
     //GAME LOOP:
     int ch;
-    while((ch=getch()) != 27) //CHANGE TO ESCAPE KEY TO EXIT GAME WINDOW IN FINAL
+while((ch=getch()) != 27) //CHANGE TO ESCAPE KEY TO EXIT GAME WINDOW IN FINAL
     {
         //emulate one cycle
         c8.emulateCycle();
@@ -79,13 +92,37 @@ int main( int argc, char *argv[] )
            c8.render();
 
         //store key press state
-        if(keyInput.getKeys()!=-1)
-           c8.keys[keyInput.getKeys()] = 1;
+        //if(keyInput.getKeys()!=-1)
+          // c8.keys[keyInput.getKeys()] = 1;
 
         //update window
         wrefresh(c8.emWin);
      }
 
+        //testing for display
+/*      char ch;
+        bool exit = false;
+        while(exit == false)
+        {
+                c8.render();
+                wrefresh(c8.emWin);
+
+        for (int y = 0; y < 32; y++)
+           for (int x = 0; x < 64; x++)
+           {
+                int num = rand() % 100;
+                if (num < 80 && num >= 0)
+                    c8.graphics[(y*64)+x] = 0;
+                else
+                    c8.graphics[(y*64)+x] = 1;
+           }
+
+        if ( (ch=(char)getch() == 'a'))
+           exit = true;
+
+
+        }
+*/
     //when user decides to end program (by pressing ESC (int value=27), destroy window and end ncurses mo$
     delwin(c8.emWin);
     endwin();
@@ -93,5 +130,4 @@ int main( int argc, char *argv[] )
         cout << "The escape key was pressed to exit.\n\n";
 
   return 0;
-}  
-
+}
