@@ -56,7 +56,7 @@ int keyinput::translateKey(char c) {
 //----------------------------
 int keyinput::getKeys() {
     char c = getch();
-    refresh();
+    //refresh();
     return translateKey(c);
 }
 
