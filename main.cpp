@@ -4,7 +4,6 @@
 // IMPORTANT: when compiling in terminal, use command "g++ main.cpp -o main.exe -lncurses"
 //---------------------------------
 
-#include <iostream>
 #include "keyinput.h"
 #include <stdio.h>
 #include <cstdlib>
@@ -15,8 +14,6 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <iostream>
-using namespace std;
 
 // Display Size
 #define SCREEN_WIDTH 64
@@ -36,7 +33,12 @@ int main() {
     //instantiate a new chip8 emulator and new keyinput handler
     chip8 newChip8;
     keyinput keyInput;
-    
+    char rom [80];
+
+
+    //Introduce Emulator for user-friendliness
+    printf("Welcome to the CHIP-8 Emulator for Linux!\nTo begin, select one of the available ROMs to load.\nBe sure to type your selection exactly.\nIf a ROM does not appear on the list below, make sure that it is placed in the\nsame folder as the emulator.\nTo exit, press the 'L' key.\n\n");
+
     //make list of ROMS
     DIR *dir;
     dirent *dire;
@@ -50,17 +52,22 @@ int main() {
 	if(S_ISDIR(filestat.st_mode))
 		continue;
         if(strstr(dire->d_name, ".")==NULL)
-	    cout << dire->d_name << endl;
+	{
+		printf("%s", dire->d_name);
+		printf("\n");
+	}
     }
     closedir(dir);
 
-    //ask user to select a rom to load
-    cout << endl << "Select a ROM to load: ";
-    cin >> rom;
-
     //attempt to load rom
-    if(!nc8.loadROM("PONG"))
-	return 1;
+    printf("Select a ROM to load: ");
+    scanf("%s",rom);
+
+    while(!nc8.loadROM("PONG"))
+    {
+    printf("Invalid selection.  Make sure selection is spelled exactly.\nSelect a ROM to load: ");
+    scanf("%s",rom);
+    }
 
     //Initialize window
     initscr();		//initialize ncurses
@@ -82,13 +89,14 @@ int main() {
     	//emulate one cycle
         nc8.emulateCycle();
 
-	nc8.drawFlag = true;
+//	nc8.drawFlag = true;
 	//if draw flag is set, update screen
 	if(nc8.drawFlag==true)
 		nc8.render();
 
         //store key press state
-	keyInput.getKeys();
+	if(keyInput.getKeys()!=-1)
+		nc8.keys[keyInput.getKeys()] = 1;
 	
 	//update window
 	wrefresh(nc8.emWin);
