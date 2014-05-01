@@ -1,0 +1,97 @@
+//---------------------------------
+// File: main.cpp
+// Author: Group P
+// IMPORTANT: when compiling in terminal, use command "g++ main.cpp -o main.exe -lncurses"
+//---------------------------------
+
+#include "keyinput.h"
+#include "chip8.h"
+
+#include <cstdlib>
+#include <stdio.h>
+#include <iostream>
+#include <ncurses.h>
+#include <unistd.h>
+#include <cstring>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+// Display Size
+#define SCREEN_WIDTH 64
+#define SCREEN_HEIGHT 32
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* main.cpp FINAL VERSION *
+* This file is the final version of main.cpp. Main.cpp reads all the files in*
+* the user's folder for ROM files, then asks the user to select which one to *
+* play. It then converts this choice to a character array, loads the ROM, and*
+* then proceeds to emulate the cycle. *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+int main( int argc, char *argv[] )
+{
+    // Instantiate new objects
+    chip8 c8;
+    keyinput keyInput;
+
+    // Initialize Chip8
+    c8.initialize();
+
+    // Load ROM from command line, detect and deal with possible errors
+        if (argc != 2) {
+            cout << "\nImproper usage of program execution.\n";
+            cout << "Usage: [./Chip8_Emulator.exe] [ROM filename]\n\n";
+            return 1;
+        }
+
+        if (!c8.loadROM( argv[1] )) {
+            cout << "\nError: Could not load filename '" << argv[1] << "'\n\n";
+            return 1;
+        }
+        else
+            cout << "\nSuccessfully loaded '" << argv[1] << "'\n\n";
+
+
+    //Initialize window
+    initscr();  //initialize ncurses
+    cbreak();   //get input after every character entered
+    noecho();   //so input will not automatically print to window
+    refresh();  //prepare console for window
+
+    start_color();      //prepare console for colors
+    init_pair(1, COLOR_BLACK, COLOR_BLACK); //defining black pixels
+    init_pair(2, COLOR_WHITE, COLOR_WHITE); //defining white pixels
+
+    c8.emWin = newwin(SCREEN_HEIGHT, SCREEN_WIDTH, 0, 0);
+    wrefresh(c8.emWin);
+
+    //GAME LOOP:
+    int ch;
+    while((ch=getch()) != 27) //CHANGE TO ESCAPE KEY TO EXIT GAME WINDOW IN FINAL
+    {
+        //emulate one cycle
+        c8.emulateCycle();
+
+        // nc8.drawFlag = true;
+        //if draw flag is set, update screen
+        if(c8.drawFlag==true)
+           c8.render();
+
+        //store key press state
+        if(keyInput.getKeys()!=-1)
+           c8.keys[keyInput.getKeys()] = 1;
+
+        //update window
+        wrefresh(c8.emWin);
+     }
+
+    //when user decides to end program (by pressing ESC (int value=27), destroy window and end ncurses mo$
+    delwin(c8.emWin);
+    endwin();
+
+        cout << "The escape key was pressed to exit.\n\n";
+
+  return 0;
+}  
+
